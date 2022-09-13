@@ -1,2 +1,2 @@
-# service-broker
-Сервис broker выполняет роль api-хаба
+# service-gateway
+Сервис gateway выполняет роль api-хаба

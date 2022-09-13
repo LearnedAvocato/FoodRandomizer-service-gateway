@@ -1,9 +1,15 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
+	proto "gateway/proto/generated"
 	"log"
 	"net/http"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type foodCard struct {
@@ -36,25 +42,35 @@ func getRandomFood(userData userData) foodCard {
 }
 
 func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
-	userData := userData{
-		Longitude: ParseFloat(r.URL.Query().Get("longitude")),
-		Latitude:  ParseFloat(r.URL.Query().Get("latitude")),
-		//UserId:    ParseUint(r.Header.Get("UserId")),
-		//HasUserId: len(r.Header.Get("UserId")) > 0,
-	}
-
-	payload := jsonRespose{
-		Error:    false,
-		FoodCard: getRandomFood(userData),
-	}
-
-	jsonPayload, err := json.Marshal(payload)
+	log.Println("get food request")
+	log.Println("1")
+	conn, err := grpc.Dial("delivery-club-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	log.Println("2t")
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatalf("Failed to get random food by gRPC: %v", err)
+	}
+	defer conn.Close()
+
+	c := proto.NewDeliveryClubClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	log.Println("do food request")
+	foodResponse, err := c.GetRandomFood(ctx, &proto.FoodRequest{
+		CardsNum:   1,
+		FoodFilter: &proto.FoodFilter{},
+		Longitude:  37.762069,
+		Latitude:   55.669746,
+	})
+
+	log.Println("foodResponse received")
+
+	if err != nil {
+		log.Fatalf("Failed to get random food by gRPC: %v", err)
 	}
 
+	jsonPayload := protojson.Format(foodResponse)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
-	w.Write(jsonPayload)
+	w.Write([]byte(jsonPayload))
 }
