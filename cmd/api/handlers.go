@@ -5,6 +5,7 @@ import (
 	proto "gateway/proto/generated"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"google.golang.org/grpc"
@@ -30,22 +31,9 @@ type userData struct {
 	//HasUserId bool
 }
 
-func getRandomFood(userData userData) foodCard {
-	// TODO: check user id
-	log.Print("User coordinates: ", userData.Latitude, userData.Longitude)
-
-	return foodCard{
-		ImageUrl:    "url",
-		Description: "tasty",
-		Title:       "food",
-	}
-}
-
+// CONNECT ONLY 1 TIME
 func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
-	log.Println("get food request")
-	log.Println("1")
 	conn, err := grpc.Dial("delivery-club-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	log.Println("2t")
 	if err != nil {
 		log.Fatalf("Failed to get random food by gRPC: %v", err)
 	}
@@ -55,15 +43,21 @@ func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	log.Println("do food request")
-	foodResponse, err := c.GetRandomFood(ctx, &proto.FoodRequest{
-		CardsNum:   1,
-		FoodFilter: &proto.FoodFilter{},
-		Longitude:  37.762069,
-		Latitude:   55.669746,
-	})
+	longitude, err := strconv.ParseFloat(r.URL.Query().Get("longitude"), 32)
+	if err != nil {
+		log.Fatalf("Failed to get longitude from request: %v", err)
+	}
+	latitude, err := strconv.ParseFloat(r.URL.Query().Get("latitude"), 32)
+	if err != nil {
+		log.Fatalf("Failed to get latitude from request: %v", err)
+	}
 
-	log.Println("foodResponse received")
+	foodResponse, err := c.GetRandomFood(ctx, &proto.FoodRequest{
+		CardsNum:   3,
+		FoodFilter: &proto.FoodFilter{},
+		Longitude:  float32(longitude),
+		Latitude:   float32(latitude),
+	})
 
 	if err != nil {
 		log.Fatalf("Failed to get random food by gRPC: %v", err)
