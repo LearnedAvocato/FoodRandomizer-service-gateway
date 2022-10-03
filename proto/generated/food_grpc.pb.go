@@ -18,122 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// DeliveryClubClient is the client API for DeliveryClub service.
+// YandexFoodClient is the client API for YandexFood service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DeliveryClubClient interface {
+type YandexFoodClient interface {
 	GetRandomFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodResponse, error)
 	GetRandomFoodFromCollection(ctx context.Context, in *FoodFromCollectionRequest, opts ...grpc.CallOption) (*FoodFromCollectionResponse, error)
 }
 
-type deliveryClubClient struct {
+type yandexFoodClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDeliveryClubClient(cc grpc.ClientConnInterface) DeliveryClubClient {
-	return &deliveryClubClient{cc}
+func NewYandexFoodClient(cc grpc.ClientConnInterface) YandexFoodClient {
+	return &yandexFoodClient{cc}
 }
 
-func (c *deliveryClubClient) GetRandomFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodResponse, error) {
+func (c *yandexFoodClient) GetRandomFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodResponse, error) {
 	out := new(FoodResponse)
-	err := c.cc.Invoke(ctx, "/food.DeliveryClub/GetRandomFood", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/food.YandexFood/GetRandomFood", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *deliveryClubClient) GetRandomFoodFromCollection(ctx context.Context, in *FoodFromCollectionRequest, opts ...grpc.CallOption) (*FoodFromCollectionResponse, error) {
+func (c *yandexFoodClient) GetRandomFoodFromCollection(ctx context.Context, in *FoodFromCollectionRequest, opts ...grpc.CallOption) (*FoodFromCollectionResponse, error) {
 	out := new(FoodFromCollectionResponse)
-	err := c.cc.Invoke(ctx, "/food.DeliveryClub/GetRandomFoodFromCollection", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/food.YandexFood/GetRandomFoodFromCollection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DeliveryClubServer is the server API for DeliveryClub service.
-// All implementations must embed UnimplementedDeliveryClubServer
+// YandexFoodServer is the server API for YandexFood service.
+// All implementations must embed UnimplementedYandexFoodServer
 // for forward compatibility
-type DeliveryClubServer interface {
+type YandexFoodServer interface {
 	GetRandomFood(context.Context, *FoodRequest) (*FoodResponse, error)
 	GetRandomFoodFromCollection(context.Context, *FoodFromCollectionRequest) (*FoodFromCollectionResponse, error)
-	mustEmbedUnimplementedDeliveryClubServer()
+	mustEmbedUnimplementedYandexFoodServer()
 }
 
-// UnimplementedDeliveryClubServer must be embedded to have forward compatible implementations.
-type UnimplementedDeliveryClubServer struct {
+// UnimplementedYandexFoodServer must be embedded to have forward compatible implementations.
+type UnimplementedYandexFoodServer struct {
 }
 
-func (UnimplementedDeliveryClubServer) GetRandomFood(context.Context, *FoodRequest) (*FoodResponse, error) {
+func (UnimplementedYandexFoodServer) GetRandomFood(context.Context, *FoodRequest) (*FoodResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRandomFood not implemented")
 }
-func (UnimplementedDeliveryClubServer) GetRandomFoodFromCollection(context.Context, *FoodFromCollectionRequest) (*FoodFromCollectionResponse, error) {
+func (UnimplementedYandexFoodServer) GetRandomFoodFromCollection(context.Context, *FoodFromCollectionRequest) (*FoodFromCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRandomFoodFromCollection not implemented")
 }
-func (UnimplementedDeliveryClubServer) mustEmbedUnimplementedDeliveryClubServer() {}
+func (UnimplementedYandexFoodServer) mustEmbedUnimplementedYandexFoodServer() {}
 
-// UnsafeDeliveryClubServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DeliveryClubServer will
+// UnsafeYandexFoodServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to YandexFoodServer will
 // result in compilation errors.
-type UnsafeDeliveryClubServer interface {
-	mustEmbedUnimplementedDeliveryClubServer()
+type UnsafeYandexFoodServer interface {
+	mustEmbedUnimplementedYandexFoodServer()
 }
 
-func RegisterDeliveryClubServer(s grpc.ServiceRegistrar, srv DeliveryClubServer) {
-	s.RegisterService(&DeliveryClub_ServiceDesc, srv)
+func RegisterYandexFoodServer(s grpc.ServiceRegistrar, srv YandexFoodServer) {
+	s.RegisterService(&YandexFood_ServiceDesc, srv)
 }
 
-func _DeliveryClub_GetRandomFood_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _YandexFood_GetRandomFood_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FoodRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DeliveryClubServer).GetRandomFood(ctx, in)
+		return srv.(YandexFoodServer).GetRandomFood(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/food.DeliveryClub/GetRandomFood",
+		FullMethod: "/food.YandexFood/GetRandomFood",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DeliveryClubServer).GetRandomFood(ctx, req.(*FoodRequest))
+		return srv.(YandexFoodServer).GetRandomFood(ctx, req.(*FoodRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DeliveryClub_GetRandomFoodFromCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _YandexFood_GetRandomFoodFromCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FoodFromCollectionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DeliveryClubServer).GetRandomFoodFromCollection(ctx, in)
+		return srv.(YandexFoodServer).GetRandomFoodFromCollection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/food.DeliveryClub/GetRandomFoodFromCollection",
+		FullMethod: "/food.YandexFood/GetRandomFoodFromCollection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DeliveryClubServer).GetRandomFoodFromCollection(ctx, req.(*FoodFromCollectionRequest))
+		return srv.(YandexFoodServer).GetRandomFoodFromCollection(ctx, req.(*FoodFromCollectionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DeliveryClub_ServiceDesc is the grpc.ServiceDesc for DeliveryClub service.
+// YandexFood_ServiceDesc is the grpc.ServiceDesc for YandexFood service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DeliveryClub_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "food.DeliveryClub",
-	HandlerType: (*DeliveryClubServer)(nil),
+var YandexFood_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "food.YandexFood",
+	HandlerType: (*YandexFoodServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetRandomFood",
-			Handler:    _DeliveryClub_GetRandomFood_Handler,
+			Handler:    _YandexFood_GetRandomFood_Handler,
 		},
 		{
 			MethodName: "GetRandomFoodFromCollection",
-			Handler:    _DeliveryClub_GetRandomFoodFromCollection_Handler,
+			Handler:    _YandexFood_GetRandomFoodFromCollection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

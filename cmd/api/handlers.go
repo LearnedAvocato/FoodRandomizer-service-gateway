@@ -33,13 +33,13 @@ type userData struct {
 
 // CONNECT ONLY 1 TIME
 func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
-	conn, err := grpc.Dial("delivery-club-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	conn, err := grpc.Dial("yandex-food-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Failed to get random food by gRPC: %v", err)
 	}
 	defer conn.Close()
 
-	c := proto.NewDeliveryClubClient(conn)
+	c := proto.NewYandexFoodClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

@@ -43,7 +43,7 @@ message FoodFromCollectionResponse {
     bool succeed = 2;
 }
 
-service DeliveryClub {
+service YandexFood {
     rpc GetRandomFood(FoodRequest) returns (FoodResponse);
     rpc GetRandomFoodFromCollection(FoodFromCollectionRequest) returns (FoodFromCollectionResponse);
 }
