@@ -53,7 +53,7 @@ func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	foodResponse, err := c.GetRandomFood(ctx, &proto.FoodRequest{
-		CardsNum:   3,
+		CardsNum:   8,
 		FoodFilter: &proto.FoodFilter{},
 		Longitude:  float32(longitude),
 		Latitude:   float32(latitude),
