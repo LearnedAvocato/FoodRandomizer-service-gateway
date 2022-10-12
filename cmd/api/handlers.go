@@ -8,8 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -31,15 +29,8 @@ type userData struct {
 	//HasUserId bool
 }
 
-// CONNECT ONLY 1 TIME
 func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
-	conn, err := grpc.Dial("yandex-food-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("Failed to get random food by gRPC: %v", err)
-	}
-	defer conn.Close()
-
-	c := proto.NewYandexFoodClient(conn)
+	c := proto.NewYandexFoodClient(app.conn)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
