@@ -42,12 +42,24 @@ func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("Failed to get latitude from request: %v", err)
 	}
+	cardsNum, err := strconv.ParseInt(r.URL.Query().Get("cardsNum"), 10, 64)
+	if err != nil {
+		log.Fatalf("Failed to get latitude from request: %v", err)
+	}
+	getTags := false
+	getTagsStr := r.URL.Query().Get("getTags")
+	if getTagsStr == "true" {
+		getTags = true
+	}
+
+	selectedTags := r.URL.Query()["tags"]
 
 	foodResponse, err := c.GetRandomFood(ctx, &proto.FoodRequest{
-		CardsNum:   8,
-		FoodFilter: &proto.FoodFilter{},
-		Longitude:  float32(longitude),
-		Latitude:   float32(latitude),
+		CardsNum:     cardsNum,
+		GetTags:      getTags,
+		Longitude:    float32(longitude),
+		Latitude:     float32(latitude),
+		SelectedTags: selectedTags,
 	})
 
 	if err != nil {
