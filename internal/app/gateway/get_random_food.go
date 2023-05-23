@@ -1,14 +1,14 @@
-package main
+package gateway
 
 import (
 	"context"
-	proto "gateway/proto/generated"
+	yandex_food "gateway/pkg/api/yandex-food"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 
-	"google.golang.org/protobuf/encoding/protojson"
+	"github.com/golang/protobuf/jsonpb"
 )
 
 type foodCard struct {
@@ -25,12 +25,11 @@ type jsonRespose struct {
 type userData struct {
 	Longitude float64
 	Latitude  float64
-	//UserId    uint64
-	//HasUserId bool
 }
 
-func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
-	c := proto.NewYandexFoodClient(app.conn)
+func (i *Implementation) GetRandomFood(w http.ResponseWriter, r *http.Request) {
+	yandexFoodClient := yandex_food.NewYandexFoodClient(i.yandexFoodConn)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -54,7 +53,7 @@ func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
 
 	selectedTags := r.URL.Query()["tags"]
 
-	foodResponse, err := c.GetRandomFood(ctx, &proto.FoodRequest{
+	foodResponse, err := yandexFoodClient.GetRandomFood(ctx, &yandex_food.FoodRequest{
 		CardsNum:     cardsNum,
 		GetTags:      getTags,
 		Longitude:    float32(longitude),
@@ -66,7 +65,12 @@ func (app *Config) GetRandomFood(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Failed to get random food by gRPC: %v", err)
 	}
 
-	jsonPayload := protojson.Format(foodResponse)
+	marshaller := jsonpb.Marshaler{}
+	jsonPayload, err := marshaller.MarshalToString(foodResponse)
+	if err != nil {
+		log.Printf("Error while converting json to string: %v", err)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte(jsonPayload))
