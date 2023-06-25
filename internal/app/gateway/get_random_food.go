@@ -62,7 +62,9 @@ func (i *Implementation) GetRandomFood(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		log.Fatalf("Failed to get random food by gRPC: %v", err)
+		log.Printf("Failed to get random food by gRPC: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	marshaller := jsonpb.Marshaler{}
